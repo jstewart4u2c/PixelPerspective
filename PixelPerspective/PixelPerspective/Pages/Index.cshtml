@@ -4,7 +4,86 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- HOME PAGE -->
+<div class="container-fluid">
+    <div class="row">
+        <!-- This is the section of the wireframe at the top designated "featured game sliders", we will probably implement an algorithm to pull games at random in the database to appear here-->
+        <div class="col-md-12 mb-6">
+            <div class="justify-content-start">
+
+                <div class="text-center">
+                    <h1 class="display-4">FEATURED GAME SLIDERS WILL APPEAR HERE</h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Left Side Panel -->
+            <div class="col-md-9 mb-6">
+                <div class="justify-content-start">
+
+                    <div class="row mb-5">
+                        <div class="col-md-4">
+                            <h2>New Releases</h2>
+                        </div>
+                        <!-- Game thumbnails that link to the game's page will appear here -->
+                        @for (var i = 0; i < 4; i++)
+                        {
+                            <div class="col-md-2">
+                                <p>thumbnail</p>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="row mb-5">
+                        <div class="col-md-4">
+                            <h2>Game of the year nominees 2024</h2>
+                        </div>
+                        <!-- Game thumbnails that link to the game's page will appear here -->
+                        @for (var i = 0; i < 4; i++)
+                        {
+                            <div class="col-md-2">
+                                <p>thumbnail</p>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="row mb-5">
+                        <div class="col-md-4">
+                            <h2>Trending</h2>
+                        </div>
+                        <!-- Game thumbnails that link to the game's page will appear here -->
+                        @for (var i = 0; i < 4; i++)
+                        {
+                            <div class="col-md-2">
+                                <p>thumbnail</p>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="row mb-5">
+                        <div class="col-md-4">
+                            <h2>Our top picks</h2>
+                        </div>
+                        <!-- Game thumbnails that link to the game's page will appear here -->
+                        @for (var i = 0; i < 4; i++)
+                        {
+                            <div class="col-md-2">
+                                <p>thumbnail</p>
+                            </div>
+                        }
+                    </div>
+
+                </div>
+
+            </div>
+
+        <!-- Right Side Panel -->
+        <div class="col-md-3 mb-6">
+            @for (var i = 0; i < 4; i++)
+            {
+                <p>friend activity</p>
+            }
+        </div>
+
+    </div>
 </div>
