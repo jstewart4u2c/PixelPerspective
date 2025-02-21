@@ -5,15 +5,36 @@
 }
 
 <!-- HOME PAGE -->
+<head>
+    <title>Pixel Perspective</title>
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" />
+</head>
 <div class="container-fluid">
-    <div class="row">
+    <div class="row mb-md-3">
         <!-- This is the section of the wireframe at the top designated "featured game sliders", we will probably implement an algorithm to pull games at random in the database to appear here-->
-        <div class="col-md-12 mb-6">
+        <div class="col-md-12">
             <div class="justify-content-start">
 
-                <div class="text-center">
-                    <h1 class="display-4">FEATURED GAME SLIDERS WILL APPEAR HERE</h1>
-                </div>
+                    <div class="slider">  
+                        <div><h2>1</h2></div>
+                        <div><h2>2</h2></div>
+                        <div><h2>3</h2></div>
+                        <div><h2>4</h2></div>
+                        <div><h2>5</h2></div>
+                        <div><h2>6</h2></div>
+                        <div><h2>7</h2></div>
+                        <div><h2>8</h2></div>
+                    </div>
+
+                <script type="text/javascript">
+
+                    $('.slider').slick({
+                        infinite: true,
+                        slidesToShow: 4,
+                        slidesToScroll: 4
+                    });
+                </script>
             </div>
         </div>
 
@@ -29,7 +50,7 @@
                         @for (var i = 0; i < 4; i++)
                         {
                             <div class="col-md-2">
-                                <p>thumbnail</p>
+                                <img class="w-100" src="https://cdn.pixabay.com/photo/2022/10/15/21/23/cat-7523894__340.jpg" alt="">
                             </div>
                         }
                     </div>
@@ -42,7 +63,7 @@
                         @for (var i = 0; i < 4; i++)
                         {
                             <div class="col-md-2">
-                                <p>thumbnail</p>
+                                <img class="w-100" src="https://cdn.pixabay.com/photo/2022/10/15/21/23/cat-7523894__340.jpg" alt="">
                             </div>
                         }
                     </div>
@@ -55,7 +76,7 @@
                         @for (var i = 0; i < 4; i++)
                         {
                             <div class="col-md-2">
-                                <p>thumbnail</p>
+                                <img class="w-100" src="https://cdn.pixabay.com/photo/2022/10/15/21/23/cat-7523894__340.jpg" alt=""> 
                             </div>
                         }
                     </div>
@@ -68,7 +89,7 @@
                         @for (var i = 0; i < 4; i++)
                         {
                             <div class="col-md-2">
-                                <p>thumbnail</p>
+                                <img class="w-100" src="https://cdn.pixabay.com/photo/2022/10/15/21/23/cat-7523894__340.jpg" alt="">
                             </div>
                         }
                     </div>
@@ -78,7 +99,7 @@
             </div>
 
         <!-- Right Side Panel -->
-        <div class="col-md-3 mb-6">
+        <div class="col-md-3"">
             @for (var i = 0; i < 4; i++)
             {
                 <p>friend activity</p>
