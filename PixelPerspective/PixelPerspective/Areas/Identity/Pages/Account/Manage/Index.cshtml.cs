@@ -15,15 +15,18 @@ namespace PixelPerspective.Areas.Identity.Pages.Account.Manage
 {
     public class IndexModel : PageModel
     {
+        private readonly IWebHostEnvironment _env;
         private readonly UserManager<PixelPerspectiveUser> _userManager;
         private readonly SignInManager<PixelPerspectiveUser> _signInManager;
 
         public IndexModel(
+            IWebHostEnvironment env,
             UserManager<PixelPerspectiveUser> userManager,
             SignInManager<PixelPerspectiveUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _env = env;
         }
 
         /// <summary>
@@ -32,12 +35,20 @@ namespace PixelPerspective.Areas.Identity.Pages.Account.Manage
         /// </summary>
         public string Username { get; set; }
 
+        public PixelPerspectiveUser user { get; set; }
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
         [TempData]
         public string StatusMessage { get; set; }
+
+        [BindProperty]
+        public string ProfileImagePath { get; set; }
+
+        [BindProperty]
+        public IFormFile ProfileImage { get; set; }
+
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -66,6 +77,7 @@ namespace PixelPerspective.Areas.Identity.Pages.Account.Manage
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
+
             Username = userName;
 
             Input = new InputModel
@@ -76,7 +88,7 @@ namespace PixelPerspective.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var user = await _userManager.GetUserAsync(User);
+            user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
@@ -84,6 +96,32 @@ namespace PixelPerspective.Areas.Identity.Pages.Account.Manage
 
             await LoadAsync(user);
             return Page();
+        }
+
+        public async Task<IActionResult> OnPostDeleteImageAsync()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound("Unable to load user");
+            }
+
+            if (!string.IsNullOrEmpty(user.ProfileImagePath))
+            {
+                var imagePath = Path.Combine(_env.WebRootPath, "ProfileImages", user.ProfileImagePath);
+
+                // Deletes image in root folder
+                if (System.IO.File.Exists(imagePath))
+                {
+                    System.IO.File.Delete(imagePath);
+                }
+
+                // update database column to null for current user
+                user.ProfileImagePath = null;
+                await _userManager.UpdateAsync(user);
+            }
+
+            return RedirectToPage();
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -98,6 +136,30 @@ namespace PixelPerspective.Areas.Identity.Pages.Account.Manage
             {
                 await LoadAsync(user);
                 return Page();
+            }
+
+            if (ProfileImage != null && ProfileImage.Length > 0)
+            {
+                await OnPostDeleteImageAsync();
+
+                var uploadPath = Path.Combine(_env.WebRootPath, "ProfileImages");
+                if (!Directory.Exists(uploadPath))
+                {
+                    Directory.CreateDirectory(uploadPath);
+                }
+
+                // create unique file name
+                var uniqueName = Guid.NewGuid().ToString() + "_" + ProfileImage.FileName;
+                var filePath = Path.Combine(uploadPath, uniqueName);
+
+                using (var fStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await ProfileImage.CopyToAsync(fStream);
+                }
+
+                // update user's profile image path in db
+                user.ProfileImagePath = uniqueName;
+                await _userManager.UpdateAsync(user);
             }
 
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
