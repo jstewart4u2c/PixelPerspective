@@ -10,5 +10,7 @@ namespace PixelPerspective.Models
         public DateTime ReleaseDate { get; set; }
         public string? Genre { get; set; }
         public string? Description { get; set; }
+
+        public string? ThumbnailImagePath { get; set; }
     }
 }
