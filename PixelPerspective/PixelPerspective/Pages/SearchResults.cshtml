@@ -1,0 +1,27 @@
+﻿@page
+@model PixelPerspective.Pages.SearchResultsModel
+@{
+    ViewData["Title"] = "Search Results";
+}
+
+<h2>Search Results for "@Model.SearchQuery"</h2>
+
+@if (Model.SearchResults != null && Model.SearchResults.Length > 0)
+{
+    <ul>
+        @foreach (var game in Model.SearchResults)
+        {
+            <li>
+                <strong>@game.Name</strong><br />
+                Release Date: @(game.FirstReleaseDate.HasValue ? game.FirstReleaseDate.Value.DateTime.ToShortDateString() : "Unknown")<br />
+                <img src="@game.Cover?.Value?.Url" alt="@game.Name Cover" width="100" />
+                <br />
+                <a asp-page="GameDetails" asp-route-id="@game.Id">View Details</a>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No results found.</p>
+}

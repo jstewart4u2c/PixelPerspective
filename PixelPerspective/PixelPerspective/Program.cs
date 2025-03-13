@@ -13,6 +13,7 @@ builder.Services.AddDefaultIdentity<PixelPerspectiveUser>(options => options.Sig
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddSingleton<IGDBService>();
 
 var app = builder.Build();
 
