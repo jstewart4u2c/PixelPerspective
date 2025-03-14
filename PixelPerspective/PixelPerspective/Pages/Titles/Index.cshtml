@@ -1,0 +1,57 @@
+﻿@page "{id:int}"
+@model PixelPerspective.Pages.Titles.IndexModel
+
+@{
+    ViewData["Title"] = Model.Game?.Title ?? "Game Not Found";
+}
+
+<div class="game-container">
+    <div class="game-cover">
+        <img src="@Url.Content($"~/{Model.Game.ThumbnailImagePath}")" alt="@Model.Game.Title" />
+    </div>
+
+    <div class="game-info">
+        <h1>@Model.Game.Title</h1>
+        <div class="rating">
+            ⭐⭐⭐⭐☆ <span>(4.5/5) <a href="#">(1643 Reviews)</a></span>
+        </div>
+        <p><strong>Genre:</strong> @Model.Game.Genre</p>
+        <p><strong>Release Date:</strong> @Model.Game.ReleaseDate.ToString("MMMM dd, yyyy")</p>
+        <p><strong>Description:</strong> @Model.Game.Description</p>
+
+        <div class="actions">
+            <button class="add-to-library">+ Add to Library</button>
+            <button class="share">🔄 Share</button>
+        </div>
+    </div>
+</div>
+
+<div class="game-trailer">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/TODO" frameborder="0" allowfullscreen></iframe>
+</div>
+
+<div class="write-review">
+    <h2>Write a Review</h2>
+    <div class="review-section">
+        <div class="stars">
+            ⭐⭐⭐⭐⭐
+        </div>
+        <textarea placeholder="Write your review here..."></textarea>
+        <button type="submit">Submit</button>
+    </div>
+</div>
+
+<div class="top-reviews">
+    <h2>Top Reviews</h2>
+    <div class="review">
+        <img src="/images/sample-review.png" alt="Review Media" class="review-media" />
+        <div class="review-content">
+            <strong>bghxsty</strong>
+            ⭐⭐⭐⭐
+            <p>"This game is amazing! The graphics are stunning and the gameplay is super smooth."</p>
+            <div class="review-actions">
+                👍 455 &nbsp; 👎 27
+            </div>
+        </div>
+    </div>
+</div>

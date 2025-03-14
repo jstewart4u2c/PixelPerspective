@@ -22,6 +22,7 @@
   <ItemGroup>
     <Folder Include="Migrations\" />
     <Folder Include="wwwroot\GameCovers\" />
+    <Folder Include="wwwroot\Thumbnails\" />
     <Folder Include="wwwroot\ProfileImages\" />
   </ItemGroup>
 

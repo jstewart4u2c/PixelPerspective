@@ -14,30 +14,35 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js"></script>
 </head>
 <body class="bg-dark text-light">
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-secondary border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">Pixel Perspective</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <partial name="_LoginPartial.cshtml" />
+
+    <div id="main-container">
+        <header>
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-secondary border-bottom box-shadow mb-3">
+                <div class="container">
+                    <a class="navbar-brand" asp-area="" asp-page="/Index">Pixel Perspective</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                        <partial name="_LoginPartial.cshtml" />
+                    </div>
+                    <form method="post" asp-page="/SearchResults" class="d-flex ms-auto">
+                        <input type="text" name="SearchQuery" class="form-control me-2" placeholder="Search for games" />
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </form>
                 </div>
-                <form method="post" asp-page="/SearchResults" class="d-flex ms-auto">
-                    <input type="text" name="SearchQuery" class="form-control me-2" placeholder="Search for games" />
-                    <button type="submit" class="btn btn-primary">Search</button>
-                </form>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+            </nav>
+        </header>
+
+        <div class="container" id="content">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
     </div>
 
+    <!-- ✅ Footer is OUTSIDE the flexbox container -->
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2025 - PixelPerspective - <a asp-area="" asp-page="/Privacy">Privacy</a>
@@ -49,5 +54,6 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>
