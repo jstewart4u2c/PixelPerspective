@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\GameCovers\**" />
+    <Content Remove="wwwroot\GameCovers\**" />
+    <EmbeddedResource Remove="wwwroot\GameCovers\**" />
+    <None Remove="wwwroot\GameCovers\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="IGDB" Version="5.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.11" />
@@ -21,7 +28,6 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
-    <Folder Include="wwwroot\GameCovers\" />
     <Folder Include="wwwroot\Thumbnails\" />
     <Folder Include="wwwroot\ProfileImages\" />
   </ItemGroup>

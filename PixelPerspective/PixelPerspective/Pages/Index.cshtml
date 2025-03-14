@@ -16,16 +16,12 @@
         <div class="col-md-12">
             <div class="justify-content-start">
 
-                    <div class="slider">  
-                        <div><h2>1</h2></div>
-                        <div><h2>2</h2></div>
-                        <div><h2>3</h2></div>
-                        <div><h2>4</h2></div>
-                        <div><h2>5</h2></div>
-                        <div><h2>6</h2></div>
-                        <div><h2>7</h2></div>
-                        <div><h2>8</h2></div>
-                    </div>
+                <div class="slider">  
+                    @foreach (var game in Model.TopBar)
+                    {
+                        <div><h1>@game.Title</h1></div>
+                    }
+                </div>
 
                 <script type="text/javascript">
 
@@ -47,11 +43,9 @@
                             <h2>New Releases</h2>
                         </div>
                         <!-- Game thumbnails that link to the game's page will appear here -->
-                        @for (var i = 0; i < 4; i++)
+                        @foreach (var game in Model.NewReleases)
                         {
-                            <div class="col-md-2">
-                                <img class="w-100" src="https://cdn.pixabay.com/photo/2022/10/15/21/23/cat-7523894__340.jpg" alt="">
-                            </div>
+                            <div><h1>@game.Title</h1></div>
                         }
                     </div>
 
@@ -60,11 +54,9 @@
                             <h2>Game of the year nominees 2024</h2>
                         </div>
                         <!-- Game thumbnails that link to the game's page will appear here -->
-                        @for (var i = 0; i < 4; i++)
+                        @foreach (var game in Model.GamesOfTheYear)
                         {
-                            <div class="col-md-2">
-                                <img class="w-100" src="https://cdn.pixabay.com/photo/2022/10/15/21/23/cat-7523894__340.jpg" alt="">
-                            </div>
+                            <div><h1>@game.Title</h1></div>
                         }
                     </div>
 
@@ -73,11 +65,9 @@
                             <h2>Trending</h2>
                         </div>
                         <!-- Game thumbnails that link to the game's page will appear here -->
-                        @for (var i = 0; i < 4; i++)
+                        @foreach (var game in Model.TrendingGames)
                         {
-                            <div class="col-md-2">
-                                <img class="w-100" src="https://cdn.pixabay.com/photo/2022/10/15/21/23/cat-7523894__340.jpg" alt=""> 
-                            </div>
+                            <div><h1>@game.Title</h1></div>
                         }
                     </div>
 
@@ -86,11 +76,9 @@
                             <h2>Our top picks</h2>
                         </div>
                         <!-- Game thumbnails that link to the game's page will appear here -->
-                        @for (var i = 0; i < 4; i++)
+                        @foreach (var game in Model.OurTopPicks)
                         {
-                            <div class="col-md-2">
-                                <img class="w-100" src="https://cdn.pixabay.com/photo/2022/10/15/21/23/cat-7523894__340.jpg" alt="">
-                            </div>
+                            <div><h1>@game.Title</h1></div>
                         }
                     </div>
 
