@@ -1,0 +1,81 @@
+﻿@page
+@model PixelPerspective.Pages.Admin.IndexModel
+@{
+    ViewData["Title"] = "Admin Page";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+            <div class="position-sticky">
+                <h4>Administration</h4>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="manage-users-tab" href="#" onclick="loadTab('users')">Manage Users</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="manage-games-tab" href="#" onclick="loadTab('games')">Manage Games</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="manage-reviews-tab" href="#" onclick="loadTab('reviews')">Manage Reviews</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-4">
+            <h1>@ViewData["Title"]</h1>
+            <div id="content-area">
+                <!-- Dynamic Content will load here based on the selected tab -->
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+    function loadTab(tab) {
+        // Load the relevant content dynamically
+        let contentArea = document.getElementById("content-area");
+        if (tab === 'users') {
+            contentArea.innerHTML = `
+                <h3>Users</h3>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Admin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Sample User Row -->
+                        <tr>
+                            <td>username1</td>
+                            <td>user1@example.com</td>
+                            <td>123-456-7890</td>
+                            <td><input type="checkbox" checked></td>
+                        </tr>
+                        <tr>
+                            <td>username2</td>
+                            <td>user2@example.com</td>
+                            <td>123-456-7891</td>
+                            <td><input type="checkbox"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            `;
+        }
+        else if (tab === 'games') {
+            contentArea.innerHTML = `<h3>Manage Games Content</h3>`;
+        }
+        else if (tab === 'reviews') {
+            contentArea.innerHTML = `<h3>Manage Reviews Content</h3>`;
+        }
+    }
+
+    // Default load tab
+    loadTab('users');
+</script>

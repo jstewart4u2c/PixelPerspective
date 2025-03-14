@@ -181,6 +181,9 @@ namespace PixelPerspective.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("JoinedDate")
                         .HasColumnType("datetime2");
 

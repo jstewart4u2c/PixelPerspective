@@ -16,11 +16,13 @@ public class PixelPerspectiveUser : IdentityUser
 
     [PersonalData]
     [Column(TypeName = "nvarchar(255)")]
-    public string? ProfileImagePath {  get; set; }
+    public string? ProfileImagePath { get; set; }
 
     // Site Specific Data
     public int ReputationPoints { get; set; } = 0;
     public DateTime JoinedDate { get; set; } = DateTime.UtcNow;
 
+    // New IsAdmin field (true for admin, false for non-admin)
+    public bool IsAdmin { get; set; } = false;
 }
 
