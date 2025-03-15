@@ -23,6 +23,8 @@ public class PixelPerspectiveUser : IdentityUser
     public DateTime JoinedDate { get; set; } = DateTime.UtcNow;
 
     // New IsAdmin field (true for admin, false for non-admin)
-    public bool IsAdmin { get; set; } = false;
+    public bool? IsAdmin { get; set; } = false;
+
+    public string? Bio { get; set; }
 }
 

@@ -171,3 +171,52 @@ textarea {
 .update-admin-btn {
     margin-left: 10px;
 }
+
+.form-label {
+    color: gray;
+}
+
+.game-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 10px;
+}
+
+.game-item {
+    flex: 1 0 10%;
+    max-width: 100%;
+    text-align: center;
+}
+
+.game-thumbnail {
+    max-width: 140px;
+    max-height: auto;
+    object-fit: cover;
+    margin-bottom: 5px;
+}
+
+.review-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.review-item {
+    flex: 1 0 40%;
+    border: 2px solid black;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: dimgray;
+    box-sizing: border-box;
+}
+
+.review-header {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.review.center-text {
+    font-size: 14px;
+    margin-top: 10px;
+}

@@ -13,6 +13,8 @@ public class PixelPerspectiveContext : IdentityDbContext<PixelPerspectiveUser>
     {
     }
 
+    public DbSet<Game> Game { get; set; } = default!;
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -22,5 +24,4 @@ public class PixelPerspectiveContext : IdentityDbContext<PixelPerspectiveUser>
         });
     }
 
-    public DbSet<PixelPerspective.Models.Game> Game { get; set; } = default!;
 }

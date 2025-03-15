@@ -1,0 +1,34 @@
+﻿@page "{email}"
+@model PixelPerspective.Pages.UserProfileModel
+@{
+}
+
+<h3>@Model.user.UserName's Profile</h3>
+
+<div>
+    <p><strong>Bio:</strong> @Model.user.Bio</p>
+ </div>
+
+ <h4>Game Library</h4>
+ <div class="game-row">
+    @for (int i=1; i<17; i++)
+    {
+        <div class="game-item">
+            <img src="/Thumbnails/helldivers2.jpg" alt="Game Placeholder" class="game-thumbnail" />
+            <p>Game @i</p>
+        </div>
+    }
+</div>
+
+<h4>Recent Reviews</h4>
+<div class="review-row">
+    @for (int i=1; i<5; i++)
+    {
+        <div class="review-item">
+            <div class="review-header">
+                <strong>Game @i</strong>
+            </div>
+            <p class="review-text">This is a placeholder review. Super epic review for game @i.</p>
+        </div>
+    }
+</div>

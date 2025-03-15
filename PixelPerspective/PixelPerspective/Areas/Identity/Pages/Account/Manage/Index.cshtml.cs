@@ -4,6 +4,7 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Net.NetworkInformation;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -70,19 +71,26 @@ namespace PixelPerspective.Areas.Identity.Pages.Account.Manage
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
+
+            [Display(Name = "Bio")]
+            [StringLength(255, ErrorMessage = "Bio cannot exceed 255 characters.")]
+            public string Bio { get; set; } = "This user has no bio";
+
         }
 
         private async Task LoadAsync(PixelPerspectiveUser user)
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-
+            var bio = user.Bio;
 
             Username = userName;
+            
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                Bio = user.Bio,
             };
         }
 
@@ -159,6 +167,12 @@ namespace PixelPerspective.Areas.Identity.Pages.Account.Manage
 
                 // update user's profile image path in db
                 user.ProfileImagePath = uniqueName;
+                await _userManager.UpdateAsync(user);
+            }
+
+            if (Input.Bio != user.Bio)
+            {
+                user.Bio = Input.Bio;
                 await _userManager.UpdateAsync(user);
             }
 
