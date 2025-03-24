@@ -4,6 +4,7 @@ using IGDB.Models;
 using Microsoft.AspNetCore.Identity;
 using PixelPerspective.Data;
 using Microsoft.EntityFrameworkCore;
+using Elfie.Serialization;
 
 namespace PixelPerspective.Pages
 {
@@ -23,6 +24,8 @@ namespace PixelPerspective.Pages
         public List<PixelPerspective.Models.Game> GamesOfTheYear { get; set; } = new List<Models.Game>();
         public List<PixelPerspective.Models.Game> TrendingGames { get; set; } = new List<Models.Game>();
         public List<PixelPerspective.Models.Game> OurTopPicks { get; set; } = new List<Models.Game>();
+
+        public List<String> ThumbnailPaths { get; set; } = new List<String>();
 
 
         public async Task OnGetASync()
