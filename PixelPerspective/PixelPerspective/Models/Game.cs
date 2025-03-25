@@ -12,5 +12,9 @@ namespace PixelPerspective.Models
         public string? Description { get; set; }
 
         public string? ThumbnailImagePath { get; set; }
+
+        public string CoverUrl => !string.IsNullOrEmpty(ThumbnailImagePath)
+            ? $"https://images.igdb.com/igdb/image/upload/t_cover_big/{ThumbnailImagePath}.jpg"
+            : "/images/default-cover.jpg";
     }
 }

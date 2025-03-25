@@ -14,11 +14,13 @@ public class IGDBService
 
     public async Task<Game[]?> SearchGamesAsync(string gameName)
     {
-        var query = $"fields id, name, first_release_date, total_rating, summary, cover.*; where id = 25657;";
+        var query = $@"
+                    search ""{gameName}"";
+                    fields id, name, first_release_date, aggregated_rating, summary, cover.url, game_type; 
+                    where game_type = 0;
+                    limit 10;";
 
         var result = await _client.QueryAsync<Game>(IGDBClient.Endpoints.Games, query: query);
-
-        System.Diagnostics.Debug.WriteLine($"Found {result?.Length ?? 0} games for {gameName}");
 
         return result?.ToArray();
     }

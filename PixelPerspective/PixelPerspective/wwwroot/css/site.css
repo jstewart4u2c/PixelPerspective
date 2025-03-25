@@ -34,6 +34,11 @@ body {
     overflow-x: hidden;
 }
 
+ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
 .game-container {
     display: flex;
     align-items: flex-start;
@@ -42,15 +47,36 @@ body {
 }
 
 .game-cover img {
-    width: 250px;
-    height: 350px;
     object-fit: cover;
     border-radius: 8px;
+    margin-right: 15px;
+}
+
+.game-item {
+    margin-bottom: 15px;
+}
+
+.game-title {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.game-title:hover {
+    color: #0056b3;
+}
+
+.game-content {
+    display: flex;
+    align-items: center;
 }
 
 .game-info h1 {
     font-size: 2rem;
     margin-bottom: 10px;
+}
+
+.game-details {
+    flex-grow: 1;
 }
 
 .rating {

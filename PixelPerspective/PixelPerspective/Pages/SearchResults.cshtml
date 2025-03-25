@@ -8,15 +8,34 @@
 
 @if (Model.SearchResults != null && Model.SearchResults.Length > 0)
 {
+    <hr />
     <ul>
         @foreach (var game in Model.SearchResults)
         {
             <li>
-                <strong>@game.Name</strong><br />
-                Release Date: @(game.FirstReleaseDate.HasValue ? game.FirstReleaseDate.Value.DateTime.ToShortDateString() : "Unknown")<br />
-                <img src="@game.Cover?.Value?.Url" alt="@game.Name Cover" width="100" />
-                <br />
-                <a asp-page="GameDetails" asp-route-id="@game.Id">View Details</a>
+                <div class="game-content">
+                    <div class="game-cover">
+                        <img src="@(game.Cover?.Value?.Url != null
+                        ? $"https:{game.Cover.Value.Url}"
+                        : "/images/default-cover.jpg")"
+                        alt="@game.Name Cover"
+                        width="120" height="160" />
+                    </div>
+                    <div class="game-details">
+                        <a asp-page="GameDetails" asp-route-id="@game.Id" class="game-title"><h3>@game.Name</h3></a>
+                        Release Date: @(game.FirstReleaseDate.HasValue ? game.FirstReleaseDate.Value.DateTime.ToShortDateString() : "Unknown")<br />
+                        @if(game.AggregatedRating.HasValue)
+                        {
+                            <p>Rating: @Math.Round(game.AggregatedRating.Value)</p><br />
+                        }
+                        else
+                        {
+                            <p>Rating: Not Available</p><br />
+                        }
+
+                    </div>
+                </div>
+                <hr />
             </li>
         }
     </ul>

@@ -10,19 +10,24 @@ namespace PixelPerspective.Pages
         public Game[] SearchResults { get; set; } = Array.Empty<Game>();
 
         [BindProperty(SupportsGet = true)]
-        public string SearchQuery { get; set; } = "";
+        public string SearchQuery { get; set; } = string.Empty;
 
         public SearchResultsModel(IGDBService igdbService)
         {
             _igdbService = igdbService;
         }
 
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnPostAsync()
         {
-            if (!string.IsNullOrEmpty(SearchQuery))
+            if (string.IsNullOrWhiteSpace(SearchQuery))
             {
-                SearchResults = await _igdbService.SearchGamesAsync(SearchQuery);
+                ModelState.AddModelError(string.Empty, "Please enter a search");
+                return Page();
             }
+
+            SearchResults = await _igdbService.SearchGamesAsync(SearchQuery);
+            return Page();
         }
+
     }
 }
