@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "mssql2": {
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Web/sites/PixelPerspective20250326075220/providers/Microsoft.ServiceLinker/linkers/ConnectionStringsPixelPerspectiveContext_940B6AB09F",
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/endtoendwebappdbserver/databases/PixelPerspective_db",
+      "type": "mssql.azure",
+      "connectionId": "ConnectionStrings:PixelPerspectiveContextConnection",
+      "dynamicId": null
+    }
+  }
+}
