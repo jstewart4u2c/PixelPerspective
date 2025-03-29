@@ -1,5 +1,6 @@
 ﻿@page
 @model PixelPerspective.Pages.Admin.IndexModel
+
 @{
     ViewData["Title"] = "Admin Page";
 }
@@ -27,17 +28,64 @@
         <!-- Content -->
         <main class="col-md-9 ms-sm-auto col-lg-10 px-4">
             <h1>@ViewData["Title"]</h1>
-            <div id="content-area">
-                <!-- Dynamic Content will load here based on the selected tab -->
-            </div>
+
+            <!-- Save Changes Button above the table, moved to the right -->
+            <form method="post">
+                <button type="submit" class="btn btn-primary mb-3 float-end">Save Changes</button>
+                <div id="content-area">
+                    <!-- Content will be dynamically injected here -->
+                    <h3>Users</h3>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Admin</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var user in Model.Users)
+                            {
+                                <tr>
+                                    <td>@user.UserName</td>
+                                    <td>@user.Email</td>
+                                    <td>@user.PhoneNumber</td>
+                                    <td>
+                                        <input type="checkbox" name="IsAdmin_@user.Id" @(user.IsAdmin.HasValue && user.IsAdmin.Value ? "checked" : "")>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger" onclick="confirmDelete('@user.Id')">Delete</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </form>
         </main>
     </div>
 </div>
 
 <script>
+       function confirmDelete(userId) {
+        if (confirm("Are you sure you want to permanently delete this user?")) {
+            // Use userId as string
+            window.location.href = '/Admin?handler=DeleteUser&id=' + userId;
+        }
+    }
+
+</script>
+
+
+<script>
     function loadTab(tab) {
-        // Load the relevant content dynamically
         let contentArea = document.getElementById("content-area");
+
+        // Hide all content sections
+        contentArea.innerHTML = '';
+
         if (tab === 'users') {
             contentArea.innerHTML = `
                 <h3>Users</h3>
@@ -48,31 +96,73 @@
                             <th>Email</th>
                             <th>Phone</th>
                             <th>Admin</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Sample User Row -->
-                        <tr>
-                            <td>username1</td>
-                            <td>user1@example.com</td>
-                            <td>123-456-7890</td>
-                            <td><input type="checkbox" checked></td>
-                        </tr>
-                        <tr>
-                            <td>username2</td>
-                            <td>user2@example.com</td>
-                            <td>123-456-7891</td>
-                            <td><input type="checkbox"></td>
-                        </tr>
+    @foreach (var user in Model.Users)
+    {
+                                <tr>
+                                    <td>@user.UserName</td>
+                                    <td>@user.Email</td>
+                                    <td>@user.PhoneNumber</td>
+                                    <td>
+                                        <input type="checkbox" name="IsAdmin_@user.Id" @(user.IsAdmin.HasValue && user.IsAdmin.Value ? "checked" : "")>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger" onclick="confirmDelete('@user.Id')">Delete</button>
+                                    </td>
+                                </tr>
+    }
                     </tbody>
                 </table>
             `;
-        }
-        else if (tab === 'games') {
-            contentArea.innerHTML = `<h3>Manage Games Content</h3>`;
-        }
-        else if (tab === 'reviews') {
-            contentArea.innerHTML = `<h3>Manage Reviews Content</h3>`;
+        } else if (tab === 'games') {
+            contentArea.innerHTML = `
+                <h3>Manage Games</h3>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Release Date</th>
+                            <th>Genre</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+    @foreach (var game in Model.Games)
+    {
+                                <tr>
+                                    <td>@game.Title</td>
+                                    <td>@game.ReleaseDate.ToString("MMMM dd, yyyy")</td>
+                                    <td>@game.Genre</td>
+                                </tr>
+    }
+                    </tbody>
+                </table>
+            `;
+        } else if (tab === 'reviews') {
+            contentArea.innerHTML = `
+                <h3>Manage Reviews</h3>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Review Text</th>
+                            <th>Rating</th>
+                            <th>Game</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+    @foreach (var review in Model.Reviews)
+    {
+                                <tr>
+                                    <td>@review.ReviewText</td>
+                                    <td>@review.Rating</td>
+                                    <td>@Model.Games.FirstOrDefault(g => g.Id == review.GameId)?.Title</td>
+                                </tr>
+    }
+                    </tbody>
+                </table>
+            `;
         }
     }
 

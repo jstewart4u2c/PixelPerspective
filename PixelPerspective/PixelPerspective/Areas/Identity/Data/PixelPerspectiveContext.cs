@@ -14,6 +14,7 @@ public class PixelPerspectiveContext : IdentityDbContext<PixelPerspectiveUser>
     }
 
     public DbSet<Game> Game { get; set; } = default!;
+    public DbSet<Review> Reviews { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
