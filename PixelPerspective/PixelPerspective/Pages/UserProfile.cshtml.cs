@@ -19,17 +19,21 @@ namespace PixelPerspective.Pages
         public PixelPerspectiveUser user { get; set; }
         public List<Game> GameLibrary { get; set; }
 
-        public async Task OnGetAsync(string email)
+        public async Task<IActionResult> OnGetAsync(string displayName)
         {
-            var userEmail = Uri.UnescapeDataString(email);
+            if (string.IsNullOrEmpty(displayName))
+            {
+                return NotFound();
+            }
 
-            user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
-
+            user = await _userManager.Users.FirstOrDefaultAsync(u => u.DisplayName == displayName);
             
             if (user == null)
             {
                 RedirectToPage("/Index");
             }
+
+            return Page();
         }
     }
 }

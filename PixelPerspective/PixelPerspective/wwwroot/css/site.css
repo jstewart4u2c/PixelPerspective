@@ -246,3 +246,8 @@ textarea {
     font-size: 14px;
     margin-top: 10px;
 }
+
+.profile-name {
+    font-size: 30px;
+    text-decoration: none;
+}

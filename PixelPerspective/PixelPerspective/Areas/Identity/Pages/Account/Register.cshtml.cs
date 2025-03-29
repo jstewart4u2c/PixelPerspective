@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PixelPerspective.Areas.Identity.Data;
 
@@ -71,6 +72,11 @@ namespace PixelPerspective.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
+            [Required]
+            [StringLength(100, ErrorMessage = "The display name must be between 3 and 100 characters.")]
+            [Display(Name = "Display Name")]
+            public string DisplayName { get; set; }
+
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -111,10 +117,21 @@ namespace PixelPerspective.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
             if (ModelState.IsValid)
             {
+                var existingDisplayName = await _userManager.Users
+                    .FirstOrDefaultAsync(u => u.DisplayName == Input.DisplayName);
+
+                if (existingDisplayName != null)
+                {
+                    ModelState.AddModelError("Input.DisplayName", "This display name is already taken.");
+                    return Page();
+                }
+
                 var user = CreateUser();
 
+                user.DisplayName = Input.DisplayName;
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
@@ -124,6 +141,7 @@ namespace PixelPerspective.Areas.Identity.Pages.Account
                     _logger.LogInformation("User created a new account with password.");
 
                     var userId = await _userManager.GetUserIdAsync(user);
+
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     var callbackUrl = Url.Page(

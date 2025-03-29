@@ -16,7 +16,7 @@ public class PixelPerspectiveUser : IdentityUser
 
     [PersonalData]
     [Column(TypeName = "nvarchar(255)")]
-    public string? ProfileImagePath { get; set; }
+    public string? ProfileImagePath { get; set; } 
 
     // Site Specific Data
     public int ReputationPoints { get; set; } = 0;
@@ -26,5 +26,9 @@ public class PixelPerspectiveUser : IdentityUser
     public bool? IsAdmin { get; set; } = false;
 
     public string? Bio { get; set; }
+
+    [PersonalData]
+    [Column(TypeName = "nvarchar(100)")]
+    public string? DisplayName { get; set; }
 }
 

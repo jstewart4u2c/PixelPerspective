@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using PixelPerspective.Areas.Identity.Data;
 
 namespace PixelPerspective.Areas.Identity.Pages.Account.Manage
@@ -76,6 +77,11 @@ namespace PixelPerspective.Areas.Identity.Pages.Account.Manage
             [StringLength(255, ErrorMessage = "Bio cannot exceed 255 characters.")]
             public string Bio { get; set; } = "This user has no bio";
 
+            [Display(Name = "Display Name")]
+            [Required(ErrorMessage = "Display Name is required.")]
+            [StringLength(50, ErrorMessage = "Display Name cannot exceed 50 characters.")]
+            public string DisplayName { get; set; } = string.Empty;
+
         }
 
         private async Task LoadAsync(PixelPerspectiveUser user)
@@ -83,6 +89,7 @@ namespace PixelPerspective.Areas.Identity.Pages.Account.Manage
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
             var bio = user.Bio;
+            var displayName = user.DisplayName;
 
             Username = userName;
             
@@ -91,6 +98,7 @@ namespace PixelPerspective.Areas.Identity.Pages.Account.Manage
             {
                 PhoneNumber = phoneNumber,
                 Bio = user.Bio,
+                DisplayName = displayName,
             };
         }
 
@@ -173,6 +181,21 @@ namespace PixelPerspective.Areas.Identity.Pages.Account.Manage
             if (Input.Bio != user.Bio)
             {
                 user.Bio = Input.Bio;
+                await _userManager.UpdateAsync(user);
+            }
+
+            if (Input.DisplayName != user.DisplayName)
+            {
+                var existingDisplayName = await _userManager.Users
+                    .FirstOrDefaultAsync(u => u.DisplayName == Input.DisplayName);
+
+                if (existingDisplayName != null)
+                {
+                    ModelState.AddModelError("Input.DisplayName", "This display name is already taken.");
+                    return Page();
+                }
+
+                user.DisplayName = Input.DisplayName;
                 await _userManager.UpdateAsync(user);
             }
 

@@ -4,43 +4,88 @@
     ViewData["Title"] = "Search Results";
 }
 
-<h2>Search Results for "@Model.SearchQuery"</h2>
 
-@if (Model.SearchResults != null && Model.SearchResults.Length > 0)
+<div>
+    <ul class="nav nav-tabs" id="searchTabs">
+        <li class="nav-item">
+            <a class="nav-link @((Model.SearchType == "games") ? "active" : "")" href="/SearchResults?SearchQuery=@Model.SearchQuery&SearchType=games">Games</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @((Model.SearchType == "users") ? "active" : "")" href="/SearchResults?SearchQuery=@Model.SearchQuery&SearchType=users">Users</a>
+        </li>
+    </ul>
+</div>
+
+@if (Model.SearchType == "games")
 {
-    <hr />
-    <ul>
-        @foreach (var game in Model.SearchResults)
-        {
-            <li>
-                <div class="game-content">
-                    <div class="game-cover">
-                        <img src="@(game.Cover?.Value?.Url != null
+    <h2>Game Search Results for "@Model.SearchQuery"</h2>
+    @if (Model.SearchResults != null && Model.SearchResults.Length > 0)
+    {
+        <hr />
+        <ul>
+            @foreach (var game in Model.SearchResults)
+            {
+                <li>
+                    <div class="game-content">
+                        <div class="game-cover">
+                            <img src="@(game.Cover?.Value?.Url != null
                         ? $"https:{game.Cover.Value.Url}"
                         : "/images/default-cover.jpg")"
-                        alt="@game.Name Cover"
-                        width="120" height="160" />
-                    </div>
-                    <div class="game-details">
-                        <a asp-page="GameDetails" asp-route-id="@game.Id" class="game-title"><h3>@game.Name</h3></a>
-                        Release Date: @(game.FirstReleaseDate.HasValue ? game.FirstReleaseDate.Value.DateTime.ToShortDateString() : "Unknown")<br />
-                        @if(game.AggregatedRating.HasValue)
-                        {
-                            <p>Rating: @Math.Round(game.AggregatedRating.Value)</p><br />
-                        }
-                        else
-                        {
-                            <p>Rating: Not Available</p><br />
-                        }
+                                 alt="@game.Name Cover"
+                                 width="120" height="160" />
+                        </div>
+                        <div class="game-details">
+                            <a asp-page="GameDetails" asp-route-id="@game.Id" class="game-title"><h3>@game.Name</h3></a>
+                            Release Date: @(game.FirstReleaseDate.HasValue ? game.FirstReleaseDate.Value.DateTime.ToShortDateString() : "Unknown")<br />
+                            @if (game.AggregatedRating.HasValue)
+                            {
+                                <p>Rating: @Math.Round(game.AggregatedRating.Value)</p>
 
+                                <br />
+                            }
+                            else
+                            {
+                                <p>Rating: Not Available</p>
+
+                                <br />
+                            }
+
+                        </div>
                     </div>
-                </div>
-                <hr />
-            </li>
-        }
-    </ul>
+                    <hr />
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No results found.</p>
+    }
+
 }
-else
+
+else if (Model.SearchType == "users")
 {
-    <p>No results found.</p>
+    <h2>User Results for "@Model.SearchQuery"</h2>
+    @if (Model.UserResults.Any())
+    {
+        <ul>
+            @foreach (var user in Model.UserResults)
+            {
+                <li class="d-flex align-items-center">
+                    <img src="~/ProfileImages/@(string.IsNullOrEmpty(user.ProfileImagePath) ? "defaultprofile.jpg" : user.ProfileImagePath)"
+                         alt="Profile Image"
+                         width="80"
+                         height="80"
+                         class="rounded-circle me-3" />
+                    <a href="@Url.Page("/UserProfile", new { displayName = user.DisplayName })" class="profile-name">@user.DisplayName</a>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No results found.</p>
+    }
+
 }

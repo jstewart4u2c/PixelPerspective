@@ -13,7 +13,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             
             <div class="mt-3">
-                <img src="~/ProfileImages/@(string.IsNullOrEmpty(Model.user.ProfileImagePath) ? "default_profile.png" : Model.user.ProfileImagePath)" 
+                <img src="~/ProfileImages/@(string.IsNullOrEmpty(Model.user.ProfileImagePath) ? "defaultprofile.jpg" : Model.user.ProfileImagePath)" 
                     alt="Profile Image" 
                     width="150" 
                     height="150" 
@@ -24,6 +24,11 @@
             <div class="mb-3 d-flex align-items-center">
                 <label>Profile Image: </label>
                 <input type="file" name="ProfileImage" class="form-control mb-1" />
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.DisplayName" class="form-control" placeholder="Enter your display name." />
+                <label asp-for="Input.DisplayName" class="form-label"></label>
             </div>
 
             <div class="form-floating mb-3">
