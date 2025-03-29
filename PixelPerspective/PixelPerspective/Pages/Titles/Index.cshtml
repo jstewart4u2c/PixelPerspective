@@ -7,13 +7,33 @@
 
 <div class="game-container">
     <div class="game-cover">
-        <img src="@Url.Content($"~/{Model.Game.ThumbnailImagePath}")" alt="@Model.Game.Title" />
+        <img src="@Url.Content($"~/{Model.Game.ThumbnailImagePath}")" alt="@Model.Game.Title" class="game-thumbnail" />
     </div>
 
     <div class="game-info">
         <h1>@Model.Game.Title</h1>
+        <!-- Display rating dynamically based on average score -->
         <div class="rating">
-            ⭐⭐⭐⭐☆ <span>(4.5/5) <a href="#">(1643 Reviews)</a></span>
+            @if (Model.TopReviews.Any())
+            {
+                var averageRating = Model.TopReviews.Average(r => r.Rating);
+                var fullStars = Math.Floor(averageRating);  // Full stars based on the floor of the average
+                var emptyStars = 5 - fullStars;  // Remaining stars
+
+                @for (int i = 0; i < fullStars; i++)
+                {
+                    <span>★</span> <!-- Full star -->
+                }
+                @for (int i = 0; i < emptyStars; i++)
+                {
+                    <span>☆</span> <!-- Empty star -->
+                }
+                <span> (@Model.TopReviews.Count Reviews)</span>
+            }
+            else
+            {
+                <span>☆☆☆☆☆ <span>(0 Reviews)</span></span>
+            }
         </div>
         <p><strong>Genre:</strong> @Model.Game.Genre</p>
         <p><strong>Release Date:</strong> @Model.Game.ReleaseDate.ToString("MMMM dd, yyyy")</p>
@@ -26,9 +46,12 @@
     </div>
 </div>
 
-<div class="game-trailer">
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/TODO" frameborder="0" allowfullscreen></iframe>
-</div>
+@if (!string.IsNullOrEmpty(Model.Game?.TrailerPath))
+{
+    <div class="game-trailer">
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/@Model.Game.TrailerPath" frameborder="0" allowfullscreen></iframe>
+    </div>
+}
 
 <div class="write-review">
     <h2>Write a Review</h2>
@@ -43,15 +66,42 @@
 
 <div class="top-reviews">
     <h2>Top Reviews</h2>
-    <div class="review">
-        <img src="/images/sample-review.png" alt="Review Media" class="review-media" />
-        <div class="review-content">
-            <strong>bghxsty</strong>
-            ⭐⭐⭐⭐
-            <p>"This game is amazing! The graphics are stunning and the gameplay is super smooth."</p>
-            <div class="review-actions">
-                👍 455 &nbsp; 👎 27
+    @if (Model.TopReviews.Any())
+    {
+        @foreach (var review in Model.TopReviews)
+        {
+            <div class="review">
+                @if (!string.IsNullOrEmpty(review.User?.ProfileImagePath))
+                {
+                    <img src="@Url.Content($"~/{review.User.ProfileImagePath}")" alt="Review Media" class="review-media" />
+                }
+                <div class="review-content">
+                    <strong>@review.User.UserName</strong>
+                    <div>
+                        @for (int i = 0; i < review.Rating; i++)
+                        {
+                            <span>⭐</span>
+                        }
+                    </div>
+                    <p>@review.ReviewText</p>
+                    <div class="review-actions">
+                        👍 @review.Likes &nbsp; 👎 @review.Dislikes
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
+        }
+    }
+    else
+    {
+        <p>@Model.NoReviewsMessage</p>
+    }
 </div>
+
+
+<style>
+    .game-thumbnail {
+        width: 150px;
+        height: 200px;
+        object-fit: cover;
+    }
+</style>
