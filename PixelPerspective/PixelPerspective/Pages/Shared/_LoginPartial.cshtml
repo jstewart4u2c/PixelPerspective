@@ -7,6 +7,11 @@
 @inject UserManager<PixelPerspectiveUser> UserManager
 @inject PixelPerspectiveContext _context
 
+@{
+    var user = await UserManager.GetUserAsync(User);
+    var displayName = user?.DisplayName;
+}
+
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
 {
@@ -25,16 +30,24 @@
     <li class="nav-item">
         <a class="nav-link text-dark" id="topRated" asp-page="/TopRated">Top Rated</a>
     </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" id="profile" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Profile</a>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle text-dark" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Profile
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+            <li>
+                <a class="nav-link text-dark" href="@Url.Page("/UserProfile", new { displayName = displayName })" class="profile-name">My Page</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" id="profile" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Edit Profile</a>
+            </li>
+            <li class="nav-item">
+                <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })">
+                    <button id="logout" type="submit" class="nav-link btn btn-link text-dark border-0">Logout</button>
+                </form>
+            </li>
+        </ul>
     </li>
-
-    <li class="nav-item">
-        <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })">
-            <button id="logout" type="submit" class="nav-link btn btn-link text-dark border-0">Logout</button>
-        </form>
-    </li>
-
 }
 else
 {

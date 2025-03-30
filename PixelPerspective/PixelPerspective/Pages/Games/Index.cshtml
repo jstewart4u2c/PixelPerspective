@@ -11,7 +11,7 @@
     <a asp-page="Create">Create New</a>
 </p>
 <table class="table">
-    <thead>
+    <thead style="color: white;">
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Game[0].Title)
@@ -33,7 +33,7 @@
     </thead>
     <tbody>
 @foreach (var item in Model.Game) {
-        <tr>
+        <tr style="color: white;">
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
             </td>

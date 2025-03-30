@@ -68,7 +68,7 @@ namespace PixelPerspective.Pages
             {
                 // Search for users
                 UserResults = await _userManager.Users
-                    .Where(u => u.DisplayName.ToLower().Contains(SearchQuery.ToLower()))
+                    .Where(u => u.DisplayName.ToLower().Contains(SearchQuery.ToLower()) || u.Email.ToLower().Contains(SearchQuery.ToLower()))
                     .Take(5)
                     .ToListAsync(); 
             }
