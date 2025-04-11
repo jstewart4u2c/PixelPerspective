@@ -16,6 +16,8 @@ public class PixelPerspectiveContext : IdentityDbContext<PixelPerspectiveUser>
     public DbSet<Game> Game { get; set; } = default!;
     public DbSet<Review> Reviews { get; set; } = default!;
 
+    public DbSet<Friend> Friends { get; set; } = default!;
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -23,6 +25,22 @@ public class PixelPerspectiveContext : IdentityDbContext<PixelPerspectiveUser>
         builder.Entity<PixelPerspectiveUser>(entity =>
         {
         });
+
+        builder.Entity<Friend>(b =>
+        {
+            b.HasKey(x => new { x.UserId, x.UserFriendId });
+
+            b.HasOne(x => x.User)
+                .WithMany(x => x.Friends)
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            b.HasOne(x => x.UserFriend)
+                .WithMany(x => x.FriendsOf)
+                .HasForeignKey(x => x.UserFriendId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
     }
 
 }

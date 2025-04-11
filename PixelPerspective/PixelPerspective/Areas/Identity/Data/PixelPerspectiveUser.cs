@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using PixelPerspective.Models;
 
 namespace PixelPerspective.Areas.Identity.Data;
 
@@ -30,5 +31,8 @@ public class PixelPerspectiveUser : IdentityUser
     [PersonalData]
     [Column(TypeName = "nvarchar(100)")]
     public string? DisplayName { get; set; }
+
+    public ICollection<Friend> FriendsOf {  get; set; }
+    public ICollection<Friend> Friends { get; set; }
 }
 

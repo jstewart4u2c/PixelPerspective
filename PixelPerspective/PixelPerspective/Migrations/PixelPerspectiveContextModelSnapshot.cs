@@ -245,6 +245,21 @@ namespace PixelPerspective.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("PixelPerspective.Models.Friend", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UserFriendId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("UserId", "UserFriendId");
+
+                    b.HasIndex("UserFriendId");
+
+                    b.ToTable("Friends");
+                });
+
             modelBuilder.Entity("PixelPerspective.Models.Game", b =>
                 {
                     b.Property<int>("Id")
@@ -369,6 +384,25 @@ namespace PixelPerspective.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("PixelPerspective.Models.Friend", b =>
+                {
+                    b.HasOne("PixelPerspective.Areas.Identity.Data.PixelPerspectiveUser", "UserFriend")
+                        .WithMany("FriendsOf")
+                        .HasForeignKey("UserFriendId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PixelPerspective.Areas.Identity.Data.PixelPerspectiveUser", "User")
+                        .WithMany("Friends")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+
+                    b.Navigation("UserFriend");
+                });
+
             modelBuilder.Entity("PixelPerspective.Models.Review", b =>
                 {
                     b.HasOne("PixelPerspective.Areas.Identity.Data.PixelPerspectiveUser", "User")
@@ -378,6 +412,13 @@ namespace PixelPerspective.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("PixelPerspective.Areas.Identity.Data.PixelPerspectiveUser", b =>
+                {
+                    b.Navigation("Friends");
+
+                    b.Navigation("FriendsOf");
                 });
 #pragma warning restore 612, 618
         }
