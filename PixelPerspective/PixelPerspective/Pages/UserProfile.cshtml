@@ -1,5 +1,12 @@
 ﻿@page "{displayName}"
 @model PixelPerspective.Pages.UserProfileModel
+
+@using Microsoft.AspNetCore.Identity
+@using PixelPerspective.Areas.Identity.Data
+
+@inject SignInManager<PixelPerspectiveUser> SignInManager
+@inject UserManager<PixelPerspectiveUser> UserManager
+
 @{
 }
 
@@ -14,7 +21,11 @@
          class="rounded-circle" />
 </div>
 
-<button type="submit" class="btn btn-primary mb-3 float-end">Add Friend</button>
+@if(SignInManager.IsSignedIn(User) && Model.user.DisplayName != Model.currentuser.DisplayName)
+{
+    <button type="button" id="b1" class="btn btn-success mb-3 float-end">Add Friend +</button>
+}
+
 
 <div class="bio text-center">
     <p><strong>Bio:</strong> @Model.user.Bio</p>
@@ -43,3 +54,25 @@
         </div>
     }
 </div>
+
+<script>
+
+    var b1 = document.getElementById("b1");
+
+    b1.addEventListener('click', function () {
+
+        if (b1.textContent = "Add Friend +") {
+            b1.className = "btn btn-danger mb-3 float-end";
+            b1.textContent = "Remove Friend -";
+        }
+
+        if (b1.textContent = "Remove Friend -") {
+            b1.className = "btn btn-success mb-3 float-end";
+            b1.textContent = "Add Friend +";
+        }
+
+    });
+        
+    
+
+</script>
