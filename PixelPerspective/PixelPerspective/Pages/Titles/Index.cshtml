@@ -12,27 +12,26 @@
 
     <div class="game-info">
         <h1>@Model.Game.Title</h1>
-        <!-- Display rating dynamically based on average score -->
         <div class="rating">
-            @if (Model.TopReviews.Any())
+            @if (Model.AllApprovedReviews.Any())
             {
-                var averageRating = Model.TopReviews.Average(r => r.Rating);
-                var fullStars = Math.Floor(averageRating);  // Full stars based on the floor of the average
-                var emptyStars = 5 - fullStars;  // Remaining stars
+                var averageRating = Model.AllApprovedReviews.Average(r => r.Rating);
+                var roundedAverageRating = Math.Round(averageRating, 1);
+                var fullStars = Math.Floor(averageRating);
 
-                @for (int i = 0; i < fullStars; i++)
+                @for (int i = 1; i <= 5; i++)
                 {
-                    <span>★</span> <!-- Full star -->
+                    var starClass = i <= fullStars ? "rating-star filled" : "rating-star";
+                    <span class="@starClass">★</span>
                 }
-                @for (int i = 0; i < emptyStars; i++)
-                {
-                    <span>☆</span> <!-- Empty star -->
-                }
-                <span> (@Model.TopReviews.Count Reviews)</span>
+                <span> (@roundedAverageRating/5)</span>
+                <a asp-page="/Titles/AllReviews" asp-route-id="@Model.Game.Id" class="review-link">
+                    (@Model.AllApprovedReviews.Count Reviews)
+                </a>
             }
             else
             {
-                <span>☆☆☆☆☆ <span>(0 Reviews)</span></span>
+                <span>★ ★ ★ ★ ★ <span>(0 Reviews)</span></span>
             }
         </div>
         <p><strong>Genre:</strong> @Model.Game.Genre</p>
@@ -53,17 +52,28 @@
     </div>
 }
 
+<!-- Review Submission Form -->
 <div class="write-review">
     <h2>Write a Review</h2>
-    <div class="review-section">
+    <form method="post">
+        <!-- Star Rating Section -->
         <div class="stars">
-            ⭐⭐⭐⭐⭐
+            @for (int i = 1; i <= 5; i++)
+            {
+                <span class="star" data-value="@i">★</span> <!-- Solid stars -->
+            }
         </div>
-        <textarea placeholder="Write your review here..."></textarea>
-        <button type="submit">Submit</button>
-    </div>
+
+        <!-- Hidden input to store the rating value -->
+        <input type="hidden" name="UserReviewRating" id="UserReviewRating" value="@Model.UserReviewRating" />
+
+        <!-- Review Text Section -->
+        <textarea name="ReviewText" placeholder="Write your review here..." required></textarea>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
 </div>
 
+<!-- Display Top Reviews Section -->
 <div class="top-reviews">
     <h2>Top Reviews</h2>
     @if (Model.TopReviews.Any())
@@ -71,21 +81,38 @@
         @foreach (var review in Model.TopReviews)
         {
             <div class="review">
-                @if (!string.IsNullOrEmpty(review.User?.ProfileImagePath))
-                {
-                    <img src="@Url.Content($"~/{review.User.ProfileImagePath}")" alt="Review Media" class="review-media" />
-                }
                 <div class="review-content">
-                    <strong>@review.User.UserName</strong>
+                    <strong>@review.User?.DisplayName</strong>
                     <div>
                         @for (int i = 0; i < review.Rating; i++)
                         {
-                            <span>⭐</span>
+                            <span>★</span>
                         }
                     </div>
                     <p>@review.ReviewText</p>
                     <div class="review-actions">
-                        👍 @review.Likes &nbsp; 👎 @review.Dislikes
+                        <form method="post" asp-page-handler="Like" style="display:inline;">
+                            <input type="hidden" name="ReviewId" value="@review.Id" />
+                            @{
+                                var likedKey = $"LikedReview_{review.Id}";
+                                var liked = ViewContext.HttpContext.Request.Cookies.ContainsKey(likedKey);
+                            }
+                            <button type="submit" class="reaction-button @(liked ? "active" : "")">👍 @review.Likes</button>
+                        </form>
+
+                        <form method="post" asp-page-handler="Dislike" style="display:inline;">
+                            <input type="hidden" name="ReviewId" value="@review.Id" />
+                            @{
+                                var dislikedKey = $"DislikedReview_{review.Id}";
+                                var disliked = ViewContext.HttpContext.Request.Cookies.ContainsKey(dislikedKey);
+                            }
+                            <button type="submit" class="reaction-button @(disliked ? "active" : "")">👎 @review.Dislikes</button>
+                        </form>
+
+                        <form method="post" asp-page-handler="Report" style="display:inline;">
+                            <input type="hidden" name="ReviewId" value="@review.Id" />
+                            <button type="submit" class="reaction-button report-button">Report</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -97,11 +124,101 @@
     }
 </div>
 
-
 <style>
     .game-thumbnail {
         width: 150px;
         height: 200px;
         object-fit: cover;
     }
+
+    .stars {
+        display: flex;
+        cursor: pointer;
+    }
+
+    .star {
+        font-size: 2rem;
+        color: gray; /* Default color for unselected stars */
+        padding: 0 5px;
+    }
+
+        .star.selected {
+            color: gold; /* Color for filled stars */
+        }
+
+        .star:hover {
+            color: gold; /* Gold on hover */
+        }
+
+    .rating-star {
+        font-size: 1.5rem;
+        color: gray;
+    }
+
+        .rating-star.filled {
+            color: gold;
+        }
+
+    .reaction-button {
+        background: none;
+        border: none;
+        font-size: 1rem;
+        cursor: pointer;
+        margin-right: 10px;
+        padding: 0;
+    }
+
+        .reaction-button:hover {
+            color: gold;
+        }
+
+    .report-button {
+        color: red;
+    }
+
+        .report-button:hover {
+            text-decoration: underline;
+        }
+
+    .reaction-button.active {
+        color: gold;
+    }
+
 </style>
+
+<script>
+    const stars = document.querySelectorAll('.star');
+    const ratingInput = document.getElementById('UserReviewRating'); // Hidden input field for rating
+    let selectedRating = 0;
+
+    // Hover Effect: Highlight the stars on hover
+    stars.forEach(star => {
+        star.addEventListener('mouseover', function () {
+            const value = parseInt(this.getAttribute('data-value'));
+            highlightStars(value); // Highlight the stars up to the hovered one
+        });
+
+        star.addEventListener('mouseleave', function () {
+            highlightStars(selectedRating); // Reset to the selected rating after hover ends
+        });
+
+        // Click Effect: Set the rating when a star is clicked
+        star.addEventListener('click', function () {
+            selectedRating = parseInt(this.getAttribute('data-value')); // Update selected rating
+            ratingInput.value = selectedRating; // Update hidden input with selected rating
+            highlightStars(selectedRating); // Highlight the stars based on selection
+        });
+    });
+
+    // Function to highlight the stars
+    function highlightStars(rating) {
+        stars.forEach(star => {
+            const value = parseInt(star.getAttribute('data-value'));
+            if (value <= rating) {
+                star.classList.add('selected'); // Fill stars up to the selected rating
+            } else {
+                star.classList.remove('selected'); // Empty stars after the selected rating
+            }
+        });
+    }
+</script>

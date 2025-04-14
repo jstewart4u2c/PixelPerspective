@@ -1,0 +1,89 @@
+﻿@page "{id:int}"
+@model PixelPerspective.Pages.Titles.AllReviewsModel
+@{
+    ViewData["Title"] = $"All Reviews for {Model.Game.Title}";
+}
+
+<h1>All Reviews for @Model.Game.Title</h1>
+
+<!-- Sort Options -->
+<div>
+    <form method="get">
+        <input type="hidden" name="id" value="@Model.Game.Id" />
+        <label>Sort by:</label>
+        <select name="sort" onchange="this.form.submit()">
+            <option value="newest" selected="@("newest" == Model.SortOrder)">Newest</option>
+            <option value="rating_desc" selected="@("rating_desc" == Model.SortOrder)">Rating (High → Low)</option>
+            <option value="rating_asc" selected="@("rating_asc" == Model.SortOrder)">Rating (Low → High)</option>
+            <option value="likes" selected="@("likes" == Model.SortOrder)">Most Helpful</option>
+        </select>
+    </form>
+</div>
+
+<!-- Review List -->
+@foreach (var review in Model.Reviews)
+{
+    var liked = ViewContext.HttpContext.Request.Cookies.ContainsKey($"LikedReview_{review.Id}");
+    var disliked = ViewContext.HttpContext.Request.Cookies.ContainsKey($"DislikedReview_{review.Id}");
+
+
+    <div class="review">
+        <div class="review-content">
+            <strong>@review.User?.DisplayName</strong>
+            <div>
+                @for (int i = 0; i < review.Rating; i++)
+                {
+                    <span>★</span>
+                }
+            </div>
+            <p>@review.ReviewText</p>
+            <div class="review-actions">
+                <form method="post" asp-page-handler="Like" asp-route-reviewId="@review.Id" asp-route-id="@Model.Game.Id" style="display:inline;">
+                    <button type="submit" class="reaction-button @(liked ? "active" : "")">👍 @review.Likes</button>
+                </form>
+
+                <form method="post" asp-page-handler="Dislike" asp-route-reviewId="@review.Id" asp-route-id="@Model.Game.Id" style="display:inline;">
+                    <button type="submit" class="reaction-button @(disliked ? "active" : "")">👎 @review.Dislikes</button>
+                </form>
+
+                <form method="post" asp-page-handler="Report" asp-route-reviewId="@review.Id" asp-route-id="@Model.Game.Id" style="display:inline;">
+                    <button type="submit" class="reaction-button report-button">Report</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+}
+
+<style>
+    .review-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 0.5rem;
+    }
+
+    .reaction-button {
+        background: none;
+        border: none;
+        font-size: 1rem;
+        cursor: pointer;
+        padding: 0;
+        margin: 0;
+    }
+
+        .reaction-button:hover {
+            color: gold;
+        }
+
+        .reaction-button.active {
+            color: gold;
+        }
+
+    .report-button {
+        color: red;
+    }
+
+        .report-button:hover {
+            text-decoration: underline;
+        }
+</style>
