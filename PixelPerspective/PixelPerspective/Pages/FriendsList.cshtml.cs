@@ -22,6 +22,7 @@ namespace PixelPerspective.Pages
 		}
 
 		public PixelPerspectiveUser user { get; set; }
+		public List<PixelPerspectiveUser> users { get; set; }
 
 		public async Task<IActionResult> OnGetAsync(string displayName)
 		{
@@ -36,6 +37,8 @@ namespace PixelPerspective.Pages
 			{
 				RedirectToPage("/Index");
 			}
+
+			users = await _userManager.Users.ToListAsync();
 
 			return Page();
 		}
