@@ -13,13 +13,13 @@
                 <h4>Administration</h4>
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link active" id="manage-users-tab" href="#" onclick="loadTab('users')">Manage Users</a>
+                        <a class="nav-link active" href="#" onclick="loadTab('users')">Manage Users</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="manage-games-tab" href="#" onclick="loadTab('games')">Manage Games</a>
+                        <a class="nav-link" href="#" onclick="loadTab('games')">Manage Games</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="manage-reviews-tab" href="#" onclick="loadTab('reviews')">Manage Reviews</a>
+                        <a class="nav-link" href="#" onclick="loadTab('reviews')">Manage Reviews</a>
                     </li>
                 </ul>
             </div>
@@ -29,12 +29,11 @@
         <main class="col-md-9 ms-sm-auto col-lg-10 px-4">
             <h1>@ViewData["Title"]</h1>
 
-            <!-- Save Changes Button above the table, moved to the right -->
-            <form method="post">
-                <button type="submit" class="btn btn-primary mb-3 float-end">Save Changes</button>
-                <div id="content-area">
-                    <!-- Content will be dynamically injected here -->
-                    <h3>Users</h3>
+            <!-- Users Tab -->
+            <div id="users-tab" style="display:block;">
+                <form method="post">
+                    <button type="submit" class="btn btn-primary mb-3 float-end">Save Changes</button>
+                    <h3>Manage Users</h3>
                     <table class="table table-striped">
                         <thead>
                             <tr>
@@ -53,7 +52,7 @@
                                     <td>@user.Email</td>
                                     <td>@user.PhoneNumber</td>
                                     <td>
-                                        <input type="checkbox" name="IsAdmin_@user.Id" @(user.IsAdmin.HasValue && user.IsAdmin.Value ? "checked" : "")>
+                                        <input type="checkbox" name="IsAdmin_@user.Id" @(user.IsAdmin == true ? "checked" : "") />
                                     </td>
                                     <td>
                                         <button type="button" class="btn btn-danger" onclick="confirmDelete('@user.Id')">Delete</button>
@@ -62,110 +61,191 @@
                             }
                         </tbody>
                     </table>
-                </div>
-            </form>
-        </main>
-    </div>
-</div>
+                </form>
+            </div>
 
-<script>
-       function confirmDelete(userId) {
-        if (confirm("Are you sure you want to permanently delete this user?")) {
-            // Use userId as string
-            window.location.href = '/Admin?handler=DeleteUser&id=' + userId;
-        }
-    }
-
-</script>
-
-
-<script>
-    function loadTab(tab) {
-        let contentArea = document.getElementById("content-area");
-
-        // Hide all content sections
-        contentArea.innerHTML = '';
-
-        if (tab === 'users') {
-            contentArea.innerHTML = `
-                <h3>Users</h3>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Username</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Admin</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-    @foreach (var user in Model.Users)
-    {
-                                <tr>
-                                    <td>@user.UserName</td>
-                                    <td>@user.Email</td>
-                                    <td>@user.PhoneNumber</td>
-                                    <td>
-                                        <input type="checkbox" name="IsAdmin_@user.Id" @(user.IsAdmin.HasValue && user.IsAdmin.Value ? "checked" : "")>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger" onclick="confirmDelete('@user.Id')">Delete</button>
-                                    </td>
-                                </tr>
-    }
-                    </tbody>
-                </table>
-            `;
-        } else if (tab === 'games') {
-            contentArea.innerHTML = `
+            <!-- Games Tab -->
+            <div id="games-tab" style="display:none;">
                 <h3>Manage Games</h3>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Release Date</th>
-                            <th>Genre</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-    @foreach (var game in Model.Games)
-    {
-                                <tr>
-                                    <td>@game.Title</td>
-                                    <td>@game.ReleaseDate.ToString("MMMM dd, yyyy")</td>
-                                    <td>@game.Genre</td>
-                                </tr>
-    }
-                    </tbody>
-                </table>
-            `;
-        } else if (tab === 'reviews') {
-            contentArea.innerHTML = `
-                <h3>Manage Reviews</h3>
+
+                <!-- Subtab Nav -->
+                <ul class="nav nav-tabs mb-3">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" onclick="loadGameSubtab('games-view')">View Games</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="loadGameSubtab('games-add')">Add Game</a>
+                    </li>
+                </ul>
+
+                <!-- View Games Section -->
+                <div id="games-view">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Release Date</th>
+                                <th>Genre</th>
+                                <th>Description</th>
+                                <th>Trailer</th>
+                                <th>Thumbnail</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int? editingGameId = ViewData["EditingGameId"] as int?;
+                            }
+                            @foreach (var game in Model.Games)
+                            {
+                                if (editingGameId == game.Id)
+                                {
+                                    <tr>
+                                        <form method="post" enctype="multipart/form-data" asp-page-handler="UpdateGame" asp-route-gameId="@game.Id">
+                                        <td><input type="text" name="Title" value="@game.Title" class="form-control" required /></td>
+                                        <td><input type="date" name="ReleaseDate" value="@game.ReleaseDate.ToString("yyyy-MM-dd")" class="form-control" required /></td>
+                                        <td><input type="text" name="Genre" value="@game.Genre" class="form-control" required /></td>
+                                        <td><input type="text" name="Description" value="@game.Description" class="form-control" /></td>
+                                        <td><input type="text" name="TrailerPath" value="@game.TrailerPath" class="form-control" /></td>
+                                        <td><input type="file" name="ThumbnailFile" class="form-control" /></td>
+                                        <td>
+                                            <button type="submit" class="btn btn-success btn-sm">Save</button>
+                                            <a class="btn btn-secondary btn-sm" href="/Admin?tab=games">Cancel</a>
+                                        </td>
+                                        </form>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td>@game.Title</td>
+                                        <td>@game.ReleaseDate.ToString("yyyy-MM-dd")</td>
+                                        <td>@game.Genre</td>
+                                        <td>@game.Description</td>
+                                        <td>@game.TrailerPath</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(game.ThumbnailImagePath))
+                                            {
+                                                <img src="~/@game.ThumbnailImagePath" style="width: 50px;" />
+                                            }
+                                        </td>
+                                        <td>
+                                            <form method="post" asp-page-handler="EditGame" asp-route-gameId="@game.Id" style="display:inline;">
+                                                <button type="submit" class="btn btn-warning btn-sm">Edit</button>
+                                            </form>
+                                            <form method="post" asp-page-handler="DeleteGame" asp-route-gameId="@game.Id" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this game?');">
+                                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Add Game Section -->
+                <div id="games-add" style="display:none;">
+                    <form method="post" enctype="multipart/form-data" asp-page-handler="AddGame">
+                        <div class="mb-3">
+                            <label class="form-label">Title</label>
+                            <input type="text" name="Title" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Release Date</label>
+                            <input type="date" name="ReleaseDate" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Genre</label>
+                            <input type="text" name="Genre" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea name="Description" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Trailer Path (YouTube ID)</label>
+                            <input type="text" name="TrailerPath" class="form-control" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Thumbnail Image</label>
+                            <input type="file" name="ThumbnailFile" class="form-control" accept=".jpg,.jpeg,.png" required />
+                        </div>
+                        <button type="submit" class="btn btn-success">Add Game</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Reviews Tab -->
+            <div id="reviews-tab" style="display:none;">
+                <h3>Manage Reported Reviews</h3>
                 <table class="table table-striped">
                     <thead>
                         <tr>
                             <th>Review Text</th>
                             <th>Rating</th>
                             <th>Game</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-    @foreach (var review in Model.Reviews)
-    {
-                                <tr>
-                                    <td>@review.ReviewText</td>
-                                    <td>@review.Rating</td>
-                                    <td>@Model.Games.FirstOrDefault(g => g.Id == review.GameId)?.Title</td>
-                                </tr>
-    }
+                        @foreach (var review in Model.Reviews.Where(r => !r.IsApproved))
+                        {
+                            <tr>
+                                <td>@review.ReviewText</td>
+                                <td>@review.Rating</td>
+                                <td>@Model.Games.FirstOrDefault(g => g.Id == review.GameId)?.Title</td>
+                                <td>
+                                    <form method="post" asp-page-handler="ApproveReview" asp-route-tab="reviews" style="display:inline;">
+                                        <input type="hidden" name="reviewId" value="@review.Id" />
+                                        <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                    </form>
+                                    <form method="post" asp-page-handler="DeleteReview" asp-route-tab="reviews" style="display:inline;">
+                                        <input type="hidden" name="reviewId" value="@review.Id" />
+                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
-            `;
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+    function confirmDelete(userId) {
+        if (confirm("Are you sure you want to permanently delete this user?")) {
+            window.location.href = '/Admin?handler=DeleteUser&id=' + userId;
         }
     }
 
-    // Default load tab
-    loadTab('users');
+    function loadTab(tab) {
+        document.getElementById("users-tab").style.display = "none";
+        document.getElementById("games-tab").style.display = "none";
+        document.getElementById("reviews-tab").style.display = "none";
+
+        document.getElementById(tab + "-tab").style.display = "block";
+    }
+
+    loadTab('@ViewData["CurrentTab"]');
 </script>
+
+<script>
+    function loadGameSubtab(tabId) {
+        document.getElementById("games-view").style.display = "none";
+        document.getElementById("games-add").style.display = "none";
+        document.getElementById(tabId).style.display = "block";
+
+        // update tab styling
+        const links = document.querySelectorAll("#games-tab .nav-link");
+        links.forEach(link => link.classList.remove("active"));
+        if (tabId === "games-view") {
+            links[0].classList.add("active");
+        } else {
+            links[1].classList.add("active");
+        }
+    }
+</script>
+
