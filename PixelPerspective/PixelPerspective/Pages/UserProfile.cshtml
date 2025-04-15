@@ -35,25 +35,48 @@
 
  <h4>Game Library</h4>
  <div class="game-row">
-    @for (int i=1; i<17; i++)
+    @if (Model.GameLibrary.Any())
     {
-        <div class="game-item">
-            <img src="/Thumbnails/helldivers2.jpg" alt="Game Placeholder" class="game-thumbnail" />
-            <p>Game @i</p>
-        </div>
+        @foreach (var game in Model.GameLibrary)
+        {
+            <div class="game-item">
+                <img src="@(string.IsNullOrEmpty(game.CoverUrl) ? "/images/default-cover.jpg" : $"https:{game.CoverUrl.Replace("t_thumb", "t_cover_big")}")"
+                    alt="@game.GameTitle Cover"
+                    class="game-thumbnail"
+                    width="120" height="160"/>
+                <p>@game.GameTitle</p>
+            </div>
+        }
     }
+    else
+    {
+        <p>No games in your library. Search a game to get started!</p>
+    }
+
 </div>
 
 <h4>Recent Reviews</h4>
 <div class="review-row">
-    @for (int i=1; i<5; i++)
+    @if (Model.Reviews != null && Model.Reviews.Any())
     {
-        <div class="review-item">
-            <div class="review-header">
-                <strong>Game @i</strong>
-            </div>
-            <p class="review-text">This is a placeholder review. Super epic review for game @i.</p>
-        </div>
+        <ul>
+            @foreach (var review in Model.Reviews)
+            {
+                <li>
+                    <div class="review">
+                        <h4>Game: @review.GameId</h4>
+                        <p><strong>Rating:</strong> @review.Rating/5</p>
+                        <p>@review.ReviewText</p>
+                        <p><em>Posted on: @review.CreatedAt.ToShortDateString()</em></p>
+                        <p>Likes: @review.Likes | Dislikes: @review.Dislikes</p>
+                    </div>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No reviews found for this user.</p>
     }
 </div>
 

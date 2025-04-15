@@ -1,0 +1,244 @@
+﻿@page "{id:long}"
+@model PixelPerspective.Pages.GameDetailsModel
+@{
+    ViewData["Title"] = Model.Game?.Name ?? "Game Details";
+}
+
+@using IGDB.Models
+@using System.Linq
+
+@if (Model.Game == null)
+{
+    <p>Game not found.</p>
+}
+else
+{
+    <div class="game-container">
+        <div class="game-cover">
+            <img src="@(Model.Game.Cover?.Value?.Url != null
+                 ? $"https:{Model.Game.Cover.Value.Url.Replace("t_thumb", "t_cover_big")}"
+                 : "/images/default-cover.jpg")"
+                 alt="@Model.Game.Name Cover"
+                 width="120" height="160" />
+        </div>
+
+        <div class="game-info">
+            <h1>@Model.Game.Name</h1>
+            <div class="rating">
+                @if (Model.Game.AggregatedRating != null)
+                {
+                    var rating = Math.Round(Model.Game.AggregatedRating.Value);
+                    <span>Rating: @rating/100</span>
+                }
+                else
+                {
+                    <span>No rating available</span>
+                }
+            </div>
+
+            <p><strong>Release Date:</strong>
+                @(Model.Game.FirstReleaseDate?.DateTime.ToString("MMMM dd, yyyy") ?? "Unknown")    
+            </p>
+            <p><strong>Description:</strong> @Model.Game.Summary</p>
+
+            <div class="actions">
+                @if (Model.UserGameLibrary.Any(g => g.IGDBGameId == Model.Game.Id))
+                {
+                    <form method="post" asp-page-handler="RemoveFromLibrary">
+                        <input type="hidden" name="igdbGameId" value="@Model.Game.Id" />
+                        <input type="hidden" name="gameTitle" value="@Model.Game.Name" />
+                        <input type="hidden" name="coverUrl" value="@Model.Game.Cover?.Value?.Url" />
+                        <button type="submit" class="btn btn-danger">Remove</button>
+                    </form>
+                }
+                else
+                {
+                    <form method="post" asp-page-handler="AddToLibrary">
+                        <input type="hidden" name="igdbGameId" value="@Model.Game.Id" />
+                        <input type="hidden" name="gameTitle" value="@Model.Game.Name" />
+                        <input type="hidden" name="coverUrl" value="@Model.Game.Cover?.Value?.Url" />
+                        <button type="submit" class="btn btn-primary">Add to Library</button>
+                    </form>
+                }
+                <button class="share">🔄 Share</button>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Game.Videos != null)
+    {
+        <div class="game-trailer" style="margin-top: 20px;">
+            <iframe width="560" height="315"
+                    src="https://www.youtube.com/embed/E3Huy2cdih0"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+            </iframe>
+        </div>
+    }
+
+    <!-- Review Submission Form -->
+    <div class="write-review">
+        <h2>Write a Review</h2>
+        <form method="post">
+            <!-- Star Rating Section -->
+            <div class="stars">
+                @for (int i = 1; i <= 5; i++)
+                {
+                    <span class="star" data-value="@i">★</span> <!-- Solid stars -->
+                }
+            </div>
+
+            <!-- Hidden input to store the rating value -->
+            <input type="hidden" name="UserReviewRating" id="UserReviewRating" value="@Model.UserReviewRating" />
+
+            <!-- Review Text Section -->
+            <textarea name="ReviewText" placeholder="Write your review here..." required></textarea>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+    <!-- Display Top Reviews Section -->
+    <div class="top-reviews">
+        <h2>Top Reviews</h2>
+        @if (Model.TopReviews.Any())
+        {
+            @foreach (var review in Model.TopReviews)
+            {
+                <div class="review">
+                    <div class="review-content">
+                        <strong>@review.User?.DisplayName</strong>
+                        <div>
+                            @for (int i = 0; i < review.Rating; i++)
+                            {
+                                <span>★</span>
+                            }
+                        </div>
+                        <p>@review.ReviewText</p>
+                        <div class="review-actions">
+                            <form method="post" asp-page-handler="Like" style="display:inline;">
+                                <input type="hidden" name="ReviewId" value="@review.Id" />
+                                @{
+                                    var likedKey = $"LikedReview_{review.Id}";
+                                    var liked = ViewContext.HttpContext.Request.Cookies.ContainsKey(likedKey);
+                                }
+                                <button type="submit" class="reaction-button @(liked ? "active" : "")">👍 @review.Likes</button>
+                            </form>
+
+                            <form method="post" asp-page-handler="Dislike" style="display:inline;">
+                                <input type="hidden" name="ReviewId" value="@review.Id" />
+                                @{
+                                    var dislikedKey = $"DislikedReview_{review.Id}";
+                                    var disliked = ViewContext.HttpContext.Request.Cookies.ContainsKey(dislikedKey);
+                                }
+                                <button type="submit" class="reaction-button @(disliked ? "active" : "")">👎 @review.Dislikes</button>
+                            </form>
+
+                            <form method="post" asp-page-handler="Report" style="display:inline;">
+                                <input type="hidden" name="ReviewId" value="@review.Id" />
+                                <button type="submit" class="reaction-button report-button">Report</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p>This game does not have any reviews yet!</p>
+        }
+    </div>
+}
+
+<style>
+    .stars {
+        display: flex;
+        cursor: pointer;
+    }
+
+    .star {
+        font-size: 2rem;
+        color: gray; /* Default color for unselected stars */
+        padding: 0 5px;
+    }
+
+        .star.selected {
+            color: gold; /* Color for filled stars */
+        }
+
+        .star:hover {
+            color: gold; /* Gold on hover */
+        }
+
+    .rating-star {
+        font-size: 1.5rem;
+        color: gray;
+    }
+
+        .rating-star.filled {
+            color: gold;
+        }
+
+    .reaction-button {
+        background: none;
+        border: none;
+        font-size: 1rem;
+        cursor: pointer;
+        margin-right: 10px;
+        padding: 0;
+    }
+
+        .reaction-button:hover {
+            color: gold;
+        }
+
+    .report-button {
+        color: red;
+    }
+
+        .report-button:hover {
+            text-decoration: underline;
+        }
+
+    .reaction-button.active {
+        color: gold;
+    }
+
+</style>
+
+<script>
+    const stars = document.querySelectorAll('.star');
+    const ratingInput = document.getElementById('UserReviewRating'); // Hidden input field for rating
+    let selectedRating = 0;
+
+    // Hover Effect: Highlight the stars on hover
+    stars.forEach(star => {
+        star.addEventListener('mouseover', function () {
+            const value = parseInt(this.getAttribute('data-value'));
+            highlightStars(value); // Highlight the stars up to the hovered one
+        });
+
+        star.addEventListener('mouseleave', function () {
+            highlightStars(selectedRating); // Reset to the selected rating after hover ends
+        });
+
+        // Click Effect: Set the rating when a star is clicked
+        star.addEventListener('click', function () {
+            selectedRating = parseInt(this.getAttribute('data-value')); // Update selected rating
+            ratingInput.value = selectedRating; // Update hidden input with selected rating
+            highlightStars(selectedRating); // Highlight the stars based on selection
+        });
+    });
+
+    // Function to highlight the stars
+    function highlightStars(rating) {
+        stars.forEach(star => {
+            const value = parseInt(star.getAttribute('data-value'));
+            if (value <= rating) {
+                star.classList.add('selected'); // Fill stars up to the selected rating
+            } else {
+                star.classList.remove('selected'); // Empty stars after the selected rating
+            }
+        });
+    }
+</script>

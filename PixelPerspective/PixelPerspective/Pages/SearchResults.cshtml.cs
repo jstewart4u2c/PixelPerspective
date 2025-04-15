@@ -4,15 +4,19 @@ using IGDB.Models;
 using Microsoft.AspNetCore.Identity;
 using PixelPerspective.Areas.Identity.Data;
 using Microsoft.EntityFrameworkCore;
+using PixelPerspective.Data;
+using PixelPerspective.Models;
+using System.Dynamic;
 
 namespace PixelPerspective.Pages
 {
     public class SearchResultsModel : PageModel
     {
+        private readonly PixelPerspectiveContext _context;
         private readonly IGDBService _igdbService;
         private readonly UserManager<PixelPerspectiveUser> _userManager;
 
-        public Game[] SearchResults { get; set; } = Array.Empty<Game>();
+        public IGDB.Models.Game[] SearchResults { get; set; } = Array.Empty<IGDB.Models.Game>();
         public List<PixelPerspectiveUser> UserResults { get; set; } = new List<PixelPerspectiveUser>();
 
         [BindProperty(SupportsGet = true)]
@@ -21,9 +25,12 @@ namespace PixelPerspective.Pages
         [BindProperty(SupportsGet = true)]
         public string SearchType { get; set; } = "games";
 
+        public List<GameLibrary> UserGameLibrary { get; set; } = new();
 
-        public SearchResultsModel(IGDBService igdbService, UserManager<PixelPerspectiveUser> userManager)
+
+        public SearchResultsModel(PixelPerspectiveContext context, IGDBService igdbService, UserManager<PixelPerspectiveUser> userManager)
         {
+            _context = context;
             _igdbService = igdbService;
             _userManager = userManager;
         }
@@ -54,6 +61,15 @@ namespace PixelPerspective.Pages
             SearchQuery = searchQuery;
             SearchType = searchType;
 
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user != null)
+            {
+                UserGameLibrary = await _context.UserGameLibrary
+                    .Where(g => g.UserId == user.Id)
+                    .ToListAsync();
+            }
+
             if (string.IsNullOrWhiteSpace(SearchQuery))
             {
                 return Page();
@@ -62,7 +78,8 @@ namespace PixelPerspective.Pages
             if (SearchType == "games")
             {
                 // Search for games via IGDB API
-                SearchResults = await _igdbService.SearchGamesAsync(SearchQuery); 
+                SearchResults = await _igdbService.SearchGamesAsync(SearchQuery);
+
             }
             else if (SearchType == "users")
             {
@@ -75,5 +92,47 @@ namespace PixelPerspective.Pages
 
             return Page(); 
         }
+
+        public async Task<IActionResult> OnPostAddToLibraryAsync(long igdbGameId, string gameTitle, string coverUrl, string searchQuery, string searchType)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            var existing = await _context.UserGameLibrary
+                .FirstOrDefaultAsync(g => g.UserId == user.Id && g.IGDBGameId == igdbGameId);
+
+            if (existing == null)
+            {
+                var newGame = new Models.GameLibrary
+                {
+                    UserId = user.Id,
+                    IGDBGameId = igdbGameId,
+                    GameTitle = gameTitle,
+                    CoverUrl = coverUrl
+                };
+
+                _context.UserGameLibrary.Add(newGame);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToPage("/SearchResults", new { searchQuery = searchQuery, searchType = searchType });
+        }
+
+        public async Task<IActionResult> OnPostRemoveFromLibraryAsync(long igdbGameId, string gameTitle, string coverUrl, string searchQuery, string searchType)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            var existing = await _context.UserGameLibrary
+                .FirstOrDefaultAsync(g => g.UserId == user.Id && g.IGDBGameId == igdbGameId);
+
+            if (existing != null)
+            {
+                _context.UserGameLibrary.Remove(existing);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToPage("/SearchResults", new { searchQuery = searchQuery, searchType = searchType });
+        }
+
     }
 }
+

@@ -292,6 +292,39 @@ namespace PixelPerspective.Migrations
                     b.ToTable("Game");
                 });
 
+            modelBuilder.Entity("PixelPerspective.Models.GameLibrary", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Added")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CoverUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GameTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("IGDBGameId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserGameLibrary");
+                });
+
             modelBuilder.Entity("PixelPerspective.Models.Review", b =>
                 {
                     b.Property<int>("Id")
@@ -403,6 +436,17 @@ namespace PixelPerspective.Migrations
                     b.Navigation("UserFriend");
                 });
 
+            modelBuilder.Entity("PixelPerspective.Models.GameLibrary", b =>
+                {
+                    b.HasOne("PixelPerspective.Areas.Identity.Data.PixelPerspectiveUser", "User")
+                        .WithMany("GameLibrary")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("PixelPerspective.Models.Review", b =>
                 {
                     b.HasOne("PixelPerspective.Areas.Identity.Data.PixelPerspectiveUser", "User")
@@ -419,6 +463,8 @@ namespace PixelPerspective.Migrations
                     b.Navigation("Friends");
 
                     b.Navigation("FriendsOf");
+
+                    b.Navigation("GameLibrary");
                 });
 #pragma warning restore 612, 618
         }

@@ -13,18 +13,21 @@ namespace PixelPerspective.Pages
         private readonly UserManager<PixelPerspectiveUser> _userManager;
         private readonly ILogger<IndexModel> _logger;
         private readonly PixelPerspectiveContext _context;
+        private readonly IGDBService _igdbService;
 
-        public UserProfileModel(ILogger<IndexModel> logger, UserManager<PixelPerspectiveUser> userManager, PixelPerspectiveContext context)
+        public UserProfileModel(ILogger<IndexModel> logger, UserManager<PixelPerspectiveUser> userManager, PixelPerspectiveContext context, IGDBService igdbService)
         {
             _logger = logger;
             _userManager = userManager;
             _context = context;
+            _igdbService = igdbService;
         }
 
         public PixelPerspectiveUser user { get; set; }
 
         public PixelPerspectiveUser currentuser { get; set; }
-        public List<Game> GameLibrary { get; set; }
+        public List<GameLibrary> GameLibrary { get; set; }
+        public List<Review> Reviews { get; set; }
 
         public async Task<IActionResult> OnGetAsync(string displayName)
         {
@@ -42,7 +45,17 @@ namespace PixelPerspective.Pages
                 RedirectToPage("/Index");
             }
 
+            GameLibrary = await _context.UserGameLibrary
+                .Where(g => g.UserId == user.Id)
+                .ToListAsync();
+
+            Reviews = await _context.Reviews
+                .Where(r => r.UserId == currentuser.Id)
+                .OrderByDescending(r => r.CreatedAt)
+                .ToListAsync();
+
             return Page();
         }
+
     }
 }

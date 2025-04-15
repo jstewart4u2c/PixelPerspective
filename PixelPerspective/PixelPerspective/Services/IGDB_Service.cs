@@ -25,6 +25,17 @@ public class IGDBService
         return result?.ToArray();
     }
 
+    public async Task<Game?> GetGameByIdAsync(long id)
+    {
+        var query = $@"
+                    fields id, name, first_release_date, aggregated_rating, summary, cover.url, videos;
+                    where id = {id};
+                    limit 1;";
+
+        var result = await _client.QueryAsync<Game>(IGDBClient.Endpoints.Games, query);
+        return result?.FirstOrDefault();
+    }
+
 }
 
 

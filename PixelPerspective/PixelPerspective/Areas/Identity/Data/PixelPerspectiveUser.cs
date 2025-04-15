@@ -34,5 +34,8 @@ public class PixelPerspectiveUser : IdentityUser
 
     public ICollection<Friend> FriendsOf {  get; set; }
     public ICollection<Friend> Friends { get; set; }
+
+    public ICollection<GameLibrary> GameLibrary { get; set; }
+
 }
 

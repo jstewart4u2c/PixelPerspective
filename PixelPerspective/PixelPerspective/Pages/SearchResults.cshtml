@@ -29,13 +29,14 @@
                     <div class="game-content">
                         <div class="game-cover">
                             <img src="@(game.Cover?.Value?.Url != null
-                        ? $"https:{game.Cover.Value.Url}"
-                        : "/images/default-cover.jpg")"
-                                 alt="@game.Name Cover"
-                                 width="120" height="160" />
+                                ? $"https:{game.Cover.Value.Url.Replace("t_thumb", "t_cover_big")}"
+                                : "/images/default-cover.jpg")"
+                                alt="@game.Name Cover"
+                                width="120" height="160" />
                         </div>
                         <div class="game-details">
-                            <a asp-page="GameDetails" asp-route-id="@game.Id" class="game-title"><h3>@game.Name</h3></a>
+                            <a asp-page="/GameDetails" asp-route-id="@game.Id" class="game-title"><h3>@game.Name</h3></a>
+                            
                             Release Date: @(game.FirstReleaseDate.HasValue ? game.FirstReleaseDate.Value.DateTime.ToShortDateString() : "Unknown")<br />
                             @if (game.AggregatedRating.HasValue)
                             {
@@ -48,6 +49,31 @@
                                 <p>Rating: Not Available</p>
 
                                 <br />
+                            }
+
+                        </div>
+                        <div class="add-to-library">
+                            @if (Model.UserGameLibrary.Any(g => g.IGDBGameId == game.Id))
+                            {
+                                <form method="post" asp-page-handler="RemoveFromLibrary">
+                                    <input type="hidden" name="igdbGameId" value="@game.Id" />
+                                    <input type="hidden" name="gameTitle" value="@game.Name" />
+                                    <input type="hidden" name="coverUrl" value="@game.Cover?.Value?.Url" />
+                                    <input type="hidden" name="searchQuery" value="@Model.SearchQuery" />
+                                    <input type="hidden" name="searchType" value="@Model.SearchType" />
+                                    <button type="submit" class="btn btn-danger">Remove</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form method="post" asp-page-handler="AddToLibrary">
+                                    <input type="hidden" name="igdbGameId" value="@game.Id" />
+                                    <input type="hidden" name="gameTitle" value="@game.Name" />
+                                    <input type="hidden" name="coverUrl" value="@game.Cover?.Value?.Url" />
+                                    <input type="hidden" name="searchQuery" value="@Model.SearchQuery" />
+                                    <input type="hidden" name="searchType" value="@Model.SearchType" />
+                                    <button type="submit" class="btn btn-primary">Add to Library</button>
+                                </form>
                             }
 
                         </div>
