@@ -56,6 +56,11 @@ namespace PixelPerspective.Pages
 
             return RedirectToPage("/SearchResults", new { SearchQuery = SearchQuery, SearchType = SearchType });
         }
+
+        /****
+         * OnGet searches the IGDB API for the searchQuery parameter, and searchType is assigned
+         * when a user clicks the user or game button on the search results page. 
+         * **/
         public async Task<IActionResult> OnGetAsync(string searchQuery, string searchType)
         {
             SearchQuery = searchQuery;
@@ -93,6 +98,11 @@ namespace PixelPerspective.Pages
             return Page(); 
         }
 
+
+        /****
+         * AddToLibrary method first gets the user and checks to see if the game is already in their library.
+         * If not, it retrieves the game information and adds the game to that user library. 
+         */
         public async Task<IActionResult> OnPostAddToLibraryAsync(long igdbGameId, string gameTitle, string coverUrl, string searchQuery, string searchType)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -117,6 +127,11 @@ namespace PixelPerspective.Pages
             return RedirectToPage("/SearchResults", new { searchQuery = searchQuery, searchType = searchType });
         }
 
+
+        /****
+         * RemoveFromLibrary checks to make sure the game exists in the user library before removing it when 
+         * the remove button is clicked.
+         */
         public async Task<IActionResult> OnPostRemoveFromLibraryAsync(long igdbGameId, string gameTitle, string coverUrl, string searchQuery, string searchType)
         {
             var user = await _userManager.GetUserAsync(User);

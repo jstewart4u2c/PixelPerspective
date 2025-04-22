@@ -41,6 +41,8 @@ else
             </p>
             <p><strong>Description:</strong> @Model.Game.Summary</p>
 
+
+            <!-- Add and Remove to library buttons -->
             <div class="actions">
                 @if (Model.UserGameLibrary.Any(g => g.IGDBGameId == Model.Game.Id))
                 {

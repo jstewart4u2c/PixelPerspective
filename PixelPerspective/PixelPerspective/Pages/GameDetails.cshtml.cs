@@ -35,6 +35,12 @@ namespace PixelPerspective.Pages
             _userManager = userManager;
         }
 
+        /*****
+         * When game details page is fetched, get user's current library
+         * to dynamically update the status of the add to library button.
+         * 
+         * Reviews for that game are also fetched for display. 
+         *****/
         public async Task<IActionResult> OnGetAsync(long id)
         {
             Game = await _igdbService.GetGameByIdAsync(id);
@@ -85,13 +91,13 @@ namespace PixelPerspective.Pages
                 // Insert the game record if it does not exist
                 _context.Game.Add(new PixelPerspective.Models.Game
                 {
-                    Id = (int)Game.Id, // This should be the IGDB ID
+                    Id = (int)Game.Id,
                     Title = Game.Name,
-                    // Other properties from the Game object as needed
                 });
                 await _context.SaveChangesAsync();
             }
 
+            // Create and add a new review object
             var review = new Review
             {
                 GameId = (int)Game.Id,

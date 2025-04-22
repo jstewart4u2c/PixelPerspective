@@ -7,7 +7,7 @@ namespace PixelPerspective.Models
         public int Id { get; set; }
         public string UserId { get; set; }
         public PixelPerspectiveUser User { get; set; }
-        public long IGDBGameId {  get; set; }
+        public long IGDBGameId {  get; set; } // stores the IGDB ID
         public string GameTitle { get; set; }
         public string CoverUrl { get; set; }
         public DateTime Added { get; set; } = DateTime.UtcNow;

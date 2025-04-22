@@ -33,6 +33,11 @@
     <p><strong>Bio:</strong> @Model.user.Bio</p>
  </div>
 
+
+ <!-- User Game Library is displayed here
+     + May need to limit game library shown on profile and allow expanded library through 
+        a full library link. 
+ -->
  <h4>Game Library</h4>
  <div class="game-row">
     @if (Model.GameLibrary.Any())
@@ -55,6 +60,10 @@
 
 </div>
 
+
+<!-- User Reviews
++ need to update to only show the most recent 4 or 6 reviews.
+-->
 <h4>Recent Reviews</h4>
 <div class="review-row">
     @if (Model.Reviews != null && Model.Reviews.Any())
