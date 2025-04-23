@@ -5,7 +5,7 @@ using PixelPerspective.Areas.Identity.Data;
 
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("PixelPerspectiveContextConnection") ?? throw new InvalidOperationException("Connection string 'PixelPerspectiveContextConnection' not found.");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'PixelPerspectiveContextConnection' not found.");
 
 builder.Services.AddDbContext<PixelPerspectiveContext>(options => options.UseSqlServer(connectionString));
 
