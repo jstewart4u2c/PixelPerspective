@@ -5,3 +5,26 @@
 
 
 **Priority List**
+Establish a database Complete
+Establish users/admins in the database Complete
+Establish games in the database Complete (API)
+Wireframes for what we want pages to look like (User profile, game profile, home page) Complete
+
+Medium Priority
+
+Ubuntu SQL Server (Express) Complete (Azure)
+Support for user profiles Complete
+Account required to make posts and comment Complete
+Game profile page support Complete
+Friends System (Add, unadd, block) Partially Complete
+Admin Portal Complete
+Game Search Function Complete
+Low Priority
+
+Steam API integration to view steam reviews for a game Incomplete
+Reviewbomb prevention Incomplete
+like/dislike system Complete
+Users online status (active, idle, offline) Incomplete
+Trending games on home page Incomplete
+Trending reviews on home page Incomplete
+
