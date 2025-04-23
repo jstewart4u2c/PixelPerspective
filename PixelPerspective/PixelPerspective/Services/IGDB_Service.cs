@@ -28,7 +28,7 @@ public class IGDBService
     public async Task<Game?> GetGameByIdAsync(long id)
     {
         var query = $@"
-                    fields id, name, first_release_date, aggregated_rating, summary, cover.url, videos;
+                    fields id, name, first_release_date, aggregated_rating, summary, cover.url, videos.video_id;
                     where id = {id};
                     limit 1;";
 

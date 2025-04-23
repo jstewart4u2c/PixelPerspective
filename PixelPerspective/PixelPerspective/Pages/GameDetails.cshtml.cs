@@ -28,6 +28,22 @@ namespace PixelPerspective.Pages
 
         public List<GameLibrary> UserGameLibrary { get; set; } = new();
 
+
+        /*****
+         * Accesses the first trailer in the list of trailer IDs to put into the embed. 
+         ****/
+        public string? FirstTrailer
+        {
+            get
+            {
+                var videos = Game.Videos?.Values;
+                return videos != null && videos.Any()
+                    ? videos.First().VideoId
+                    : null;
+            }
+        }
+
+
         public GameDetailsModel(IGDBService igdbService, PixelPerspectiveContext context, UserManager<PixelPerspectiveUser> userManager)
         {
             _igdbService = igdbService;
