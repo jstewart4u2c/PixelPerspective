@@ -5,6 +5,9 @@
 
 
 **Priority List**
+
+High Priority
+
 Establish a database Complete
 Establish users/admins in the database Complete
 Establish games in the database Complete (API)
