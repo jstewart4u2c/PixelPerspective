@@ -19,6 +19,7 @@ Game profile page support Complete
 Friends System (Add, unadd, block) Partially Complete
 Admin Portal Complete
 Game Search Function Complete
+
 Low Priority
 
 Steam API integration to view steam reviews for a game Incomplete
